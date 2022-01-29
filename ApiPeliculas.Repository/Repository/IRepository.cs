@@ -16,9 +16,10 @@ namespace ApiPeliculas.Repository.Repository
         IQueryable<T> GetAll();
         Task<List<T>> GetPaginado(PaginacionDto paginacionDto);
         Task<IQueryable<T>> GetQueryable();
-        Task Add(T entity);
+        Task<T> Add(T entity);
         Task Delete(int id);
         Task Update(T entity);
+        Task<bool> AnyExists(int entityId);
 
         Task Save();
     }

@@ -1,5 +1,9 @@
-﻿using ApiPeliculas.Repository.Mapping;
+﻿using ApiPeliculas.Repository.DTO.SalaDeCine;
+using ApiPeliculas.Repository.DTO.Usuario;
+using ApiPeliculas.Repository.Mapping;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
+using NetTopologySuite.Geometries;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,7 +17,10 @@ namespace ApiPeliculas.Repository
     {
         public MappingProfile()
         {
+            CreateMap<IdentityUser, UsuarioDto>();
+
             ApplyMappingsFromAssembly(Assembly.GetExecutingAssembly());
+
         }
         private void ApplyMappingsFromAssembly(Assembly assembly)
         {

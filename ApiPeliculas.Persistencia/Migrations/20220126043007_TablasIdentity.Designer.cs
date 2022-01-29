@@ -4,6 +4,7 @@ using ApiPeliculas.Persistencia;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 
@@ -12,9 +13,10 @@ using NetTopologySuite.Geometries;
 namespace ApiPeliculas.Persistencia.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220126043007_TablasIdentity")]
+    partial class TablasIdentity
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -129,37 +131,6 @@ namespace ApiPeliculas.Persistencia.Migrations
                     b.HasIndex("SalaDeCineId");
 
                     b.ToTable("PeliculasSalasDeCine");
-                });
-
-            modelBuilder.Entity("ApiPeliculas.Dominio.Entidades.Review", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<string>("Comentario")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PeliculaId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Puntuacion")
-                        .HasColumnType("int");
-
-                    b.Property<string>("UsuarioId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PeliculaId");
-
-                    b.HasIndex("UsuarioId");
-
-                    b.ToTable("Reviews");
                 });
 
             modelBuilder.Entity("ApiPeliculas.Dominio.Entidades.SalaDeCine", b =>
@@ -455,25 +426,6 @@ namespace ApiPeliculas.Persistencia.Migrations
                     b.Navigation("Pelicula");
 
                     b.Navigation("SalaDeCine");
-                });
-
-            modelBuilder.Entity("ApiPeliculas.Dominio.Entidades.Review", b =>
-                {
-                    b.HasOne("ApiPeliculas.Dominio.Entidades.Pelicula", "Pelicula")
-                        .WithMany()
-                        .HasForeignKey("PeliculaId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Usuario")
-                        .WithMany()
-                        .HasForeignKey("UsuarioId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Pelicula");
-
-                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

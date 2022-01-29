@@ -16,10 +16,25 @@ namespace ApiPeliculas.Repository.Services
             _mapper = mapper;
             _repository = repository;
         }
-        public async Task Add(TDto dto)
+        public async Task<TDto> Add(TDto dto)
         {
             var entity = _mapper.Map<TEntity>(dto);
-            await _repository.Add(entity);
+            var entitySaved = await _repository.Add(entity);
+            
+            return _mapper.Map<TDto>(entitySaved);
+
+        }
+
+        public async Task<TDto> Add(TEntity dto)
+        {
+            var entitySaved = await _repository.Add(dto);
+
+            return _mapper.Map<TDto>(entitySaved);
+        }
+
+        public Task<bool> AnyExists(int entityId)
+        {
+            return _repository.AnyExists(entityId);
         }
 
         public async Task DeleteAsync(int id)
@@ -37,6 +52,11 @@ namespace ApiPeliculas.Repository.Services
         {
             var entity = await _repository.Get(id);
             return _mapper.Map<TDto>(entity);
+        }
+
+        public Task<TEntity> GetByIdEntity(int id)
+        {
+            return _repository.Get(id);
         }
 
         public async Task<List<TDto>> GetPaginado(PaginacionDto paginacionDto)

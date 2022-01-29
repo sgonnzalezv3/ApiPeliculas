@@ -6,14 +6,15 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
 namespace ApiPeliculas.Persistencia.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20220124042925_Arreglo4")]
-    partial class Arreglo4
+    [Migration("20220125200044_SalaDeCineUbicacionfinally")]
+    partial class SalaDeCineUbicacionfinally
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -114,6 +115,46 @@ namespace ApiPeliculas.Persistencia.Migrations
                     b.ToTable("PeliculasGeneros");
                 });
 
+            modelBuilder.Entity("ApiPeliculas.Dominio.Entidades.PeliculasSalasDeCine", b =>
+                {
+                    b.Property<int>("PeliculaId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SalaCineId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SalaDeCineId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PeliculaId", "SalaCineId");
+
+                    b.HasIndex("SalaDeCineId");
+
+                    b.ToTable("PeliculasSalasDeCine");
+                });
+
+            modelBuilder.Entity("ApiPeliculas.Dominio.Entidades.SalaDeCine", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<Point>("Ubicacion")
+                        .IsRequired()
+                        .HasColumnType("geography");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("SalasDeCine");
+                });
+
             modelBuilder.Entity("ApiPeliculas.Dominio.Genero", b =>
                 {
                     b.Property<int>("Id")
@@ -170,6 +211,25 @@ namespace ApiPeliculas.Persistencia.Migrations
                     b.Navigation("Pelicula");
                 });
 
+            modelBuilder.Entity("ApiPeliculas.Dominio.Entidades.PeliculasSalasDeCine", b =>
+                {
+                    b.HasOne("ApiPeliculas.Dominio.Entidades.Pelicula", "Pelicula")
+                        .WithMany("PeliculasSalasDeCines")
+                        .HasForeignKey("PeliculaId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ApiPeliculas.Dominio.Entidades.SalaDeCine", "SalaDeCine")
+                        .WithMany("PeliculasSalasDeCines")
+                        .HasForeignKey("SalaDeCineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Pelicula");
+
+                    b.Navigation("SalaDeCine");
+                });
+
             modelBuilder.Entity("ApiPeliculas.Dominio.Entidades.Actor", b =>
                 {
                     b.Navigation("PeliculasActores");
@@ -180,6 +240,13 @@ namespace ApiPeliculas.Persistencia.Migrations
                     b.Navigation("PeliculasActores");
 
                     b.Navigation("PeliculasGeneros");
+
+                    b.Navigation("PeliculasSalasDeCines");
+                });
+
+            modelBuilder.Entity("ApiPeliculas.Dominio.Entidades.SalaDeCine", b =>
+                {
+                    b.Navigation("PeliculasSalasDeCines");
                 });
 
             modelBuilder.Entity("ApiPeliculas.Dominio.Genero", b =>

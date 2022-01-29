@@ -12,7 +12,9 @@ namespace ApiPeliculas.Repository.Services.ActoresService
         private readonly IMapper _mapper;
         private readonly IActorRepository _actorRepository;
         public ActorService(IActorRepository actorRepository , IMapper mapper)
-            :base(mapper, actorRepository)
+
+            /* esto es para pasarle a la clase base lo que necesita */
+            : base(mapper, actorRepository)
         {
             _actorRepository = actorRepository;
             _mapper = mapper;

@@ -1,12 +1,13 @@
 ﻿using ApiPeliculas.Dominio.Entidades;
 using ApiPeliculas.Persistencia;
 using ApiPeliculas.Repository.Azure;
-using ApiPeliculas.Repository.DTO.ActoresDto;
 using ApiPeliculas.Repository.DTO.PeliculasDto;
 using ApiPeliculas.Repository.Helpers;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Linq.Dynamic.Core;
 
 namespace ApiPeliculas.Repository.Repository.PeliculaRepository
 {
@@ -15,13 +16,15 @@ namespace ApiPeliculas.Repository.Repository.PeliculaRepository
         private readonly ApplicationDbContext _context;
         private readonly IAlmacenadorArchivos _almacenadorArchivos;
         private readonly IMapper _mapper;
+        private readonly ILogger<PeliculaRepository> _logger;
         private readonly string contenedor = "peliculas";
-        public PeliculaRepository(ApplicationDbContext context , IAlmacenadorArchivos almacenadorArchivos, IMapper mapper)
+        public PeliculaRepository(ApplicationDbContext context , IAlmacenadorArchivos almacenadorArchivos, IMapper mapper, ILogger<PeliculaRepository> logger)
             :base(context)
         {
             _context = context;
             _almacenadorArchivos = almacenadorArchivos;
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<PeliculaDto> AddWithFile(PeliculaCreacionDto dto, Pelicula entity)
@@ -96,7 +99,39 @@ namespace ApiPeliculas.Repository.Repository.PeliculaRepository
             {
                 peliculasQueryable = peliculasQueryable.Where(x => x.PeliculasGeneros.Select(y => y.GeneroId).Contains(filtroPeliculasDto.GeneroId));
             }
+
+            if (!string.IsNullOrEmpty(filtroPeliculasDto.CampoOrdenar))
+            {
+                var ordenamiento = filtroPeliculasDto.OrdenAscendente == true ? "ascending" : "descending";
+                /* Ordenamiento con Linq.Dynamic.Core */
+                try
+                {
+                    peliculasQueryable = peliculasQueryable.OrderBy($"{filtroPeliculasDto.CampoOrdenar} {ordenamiento}");
+                }
+                catch (Exception e )
+                {
+                    _logger.LogError(e.Message ,e); 
+                }
+
+            }
+
             return peliculasQueryable;
+        }
+
+        public async Task<List<PeliculaDetalleDto>> ObtenerTodoConFiltro()
+        {
+            var peliculasDetalles = await _context.Peliculas
+                .Include(x => x.PeliculasActores).ThenInclude(x => x.Actor)
+                .Include(x => x.PeliculasGeneros).ThenInclude(x => x.Genero)
+                .ToListAsync();
+            
+            foreach(var pelicula in peliculasDetalles)
+            {
+                pelicula.PeliculasActores = pelicula.PeliculasActores.OrderBy(x => x.Orden).ToList();
+            }
+
+            return _mapper.Map<List<PeliculaDetalleDto>>(peliculasDetalles);
+
         }
 
         public async Task UpdatePatch(int id, JsonPatchDocument<PeliculaPatchDto> patchDocument)

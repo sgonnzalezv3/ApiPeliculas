@@ -1,11 +1,12 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+using NetTopologySuite.Geometries;
 
 #nullable disable
 
 namespace ApiPeliculas.Persistencia.Migrations
 {
-    public partial class Arreglo4 : Migration
+    public partial class SalaDeCineUbicacionfinally : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -51,6 +52,20 @@ namespace ApiPeliculas.Persistencia.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Peliculas", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "SalasDeCine",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombre = table.Column<string>(type: "nvarchar(120)", maxLength: 120, nullable: false),
+                    Ubicacion = table.Column<Point>(type: "geography", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SalasDeCine", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,6 +118,31 @@ namespace ApiPeliculas.Persistencia.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PeliculasSalasDeCine",
+                columns: table => new
+                {
+                    PeliculaId = table.Column<int>(type: "int", nullable: false),
+                    SalaCineId = table.Column<int>(type: "int", nullable: false),
+                    SalaDeCineId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PeliculasSalasDeCine", x => new { x.PeliculaId, x.SalaCineId });
+                    table.ForeignKey(
+                        name: "FK_PeliculasSalasDeCine_Peliculas_PeliculaId",
+                        column: x => x.PeliculaId,
+                        principalTable: "Peliculas",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PeliculasSalasDeCine_SalasDeCine_SalaDeCineId",
+                        column: x => x.SalaDeCineId,
+                        principalTable: "SalasDeCine",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_PeliculasActores_PeliculaId",
                 table: "PeliculasActores",
@@ -112,6 +152,11 @@ namespace ApiPeliculas.Persistencia.Migrations
                 name: "IX_PeliculasGeneros_PeliculaId",
                 table: "PeliculasGeneros",
                 column: "PeliculaId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PeliculasSalasDeCine_SalaDeCineId",
+                table: "PeliculasSalasDeCine",
+                column: "SalaDeCineId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -123,6 +168,9 @@ namespace ApiPeliculas.Persistencia.Migrations
                 name: "PeliculasGeneros");
 
             migrationBuilder.DropTable(
+                name: "PeliculasSalasDeCine");
+
+            migrationBuilder.DropTable(
                 name: "Actores");
 
             migrationBuilder.DropTable(
@@ -130,6 +178,9 @@ namespace ApiPeliculas.Persistencia.Migrations
 
             migrationBuilder.DropTable(
                 name: "Peliculas");
+
+            migrationBuilder.DropTable(
+                name: "SalasDeCine");
         }
     }
 }

@@ -12,6 +12,7 @@ namespace ApiPeliculas.Repository.Repository.PeliculaRepository
         void AsignarOrdenActores(Pelicula pelicula);
         Task<IQueryable<Pelicula>> ObtenerTodoConFiltro(FiltroPeliculasDto filtroPeliculasDto);
         Task<List<PeliculaDto>> ObtenerListaFiltrada(FiltroPeliculasDto filtroPeliculasDto, IQueryable<Pelicula> queryPelicula);
+        Task<List<PeliculaDetalleDto>> ObtenerTodoConFiltro();
 
 
 

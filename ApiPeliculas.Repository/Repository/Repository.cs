@@ -22,9 +22,17 @@ namespace ApiPeliculas.Repository.Repository
         {
             _context = context;
         }
-        public async Task Add(T entity)
+        public async Task<T> Add(T entity)
         {
             await _context.Set<T>().AddAsync(entity);
+            await Save();
+            return entity;
+
+        }
+
+        public async Task<bool> AnyExists(int entityId)
+        {
+            return await _context.Set<T>().AnyAsync(x => x.Id == entityId);
         }
 
         public async Task Delete(int id)

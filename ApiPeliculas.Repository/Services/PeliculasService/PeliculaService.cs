@@ -1,7 +1,5 @@
 ﻿using ApiPeliculas.Dominio.Entidades;
-using ApiPeliculas.Repository.DTO.ActoresDto;
 using ApiPeliculas.Repository.DTO.PeliculasDto;
-using ApiPeliculas.Repository.Repository.ActorRepository;
 using ApiPeliculas.Repository.Repository.PeliculaRepository;
 using AutoMapper;
 using Microsoft.AspNetCore.JsonPatch;
@@ -13,6 +11,8 @@ namespace ApiPeliculas.Repository.Services.PeliculasService
         private readonly IMapper _mapper;
         private readonly IPeliculaRepository _peliculaRepository;
         public PeliculaService(IPeliculaRepository peliculaRepository , IMapper mapper)
+
+            /* esto es para pasarle a la clase base lo que necesita */
             :base(mapper, peliculaRepository)
         {
             _peliculaRepository = peliculaRepository;
@@ -33,6 +33,11 @@ namespace ApiPeliculas.Repository.Services.PeliculasService
         public async Task<IQueryable<Pelicula>> ObtenerTodoConFiltro(FiltroPeliculasDto filtroPeliculasDto)
         {
             return await _peliculaRepository.ObtenerTodoConFiltro(filtroPeliculasDto);
+        }
+
+        public async Task<List<PeliculaDetalleDto>> ObtenerTodoDetalle()
+        {
+            return await _peliculaRepository.ObtenerTodoConFiltro();
         }
 
         public async Task UpdateWithFile(int id, PeliculaCreacionDto dto)

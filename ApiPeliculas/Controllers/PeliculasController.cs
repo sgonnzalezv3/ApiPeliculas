@@ -22,9 +22,9 @@ namespace ApiPeliculas.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<PeliculaDto>>>Get()
+        public async Task<ActionResult<List<PeliculaDetalleDto>>>Get()
         {
-            return _service.Get();
+            return await _peliculaService.ObtenerTodoDetalle();
         }
 
         [HttpGet("filtro")]

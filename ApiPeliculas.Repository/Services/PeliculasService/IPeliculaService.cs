@@ -1,5 +1,4 @@
 ﻿using ApiPeliculas.Dominio.Entidades;
-using ApiPeliculas.Repository.DTO.ActoresDto;
 using ApiPeliculas.Repository.DTO.PeliculasDto;
 using Microsoft.AspNetCore.JsonPatch;
 
@@ -13,5 +12,6 @@ namespace ApiPeliculas.Repository.Services.PeliculasService
         Task<IQueryable<Pelicula>> ObtenerTodoConFiltro(FiltroPeliculasDto filtroPeliculasDto);
         Task<List<PeliculaDto>> ObtenerListaFiltrada(FiltroPeliculasDto filtroPeliculasDto, IQueryable<Pelicula> queryPelicula);
 
+        Task<List<PeliculaDetalleDto>> ObtenerTodoDetalle();
     }
 }
